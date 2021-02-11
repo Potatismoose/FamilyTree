@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 
 namespace FamilyTree.Database
@@ -11,6 +10,24 @@ namespace FamilyTree.Database
         public string ConnectionString { get; set; } = @"Data Source = .\SQLExpress; Integrated Security = true; database = {0}";
         public string DatabaseName { get; set; }
 
+
+
+        /*******************************************************************
+                            CONSTRUCTOR FOR CRUD CLASS
+         *******************************************************************/
+        /// <summary>
+        /// Constructor for Crud class
+        /// </summary>
+        /// <param name="databaseName">Sets the active database to the parameter passed in to the constructor.</param>
+        public Crud(string databaseName)
+        {
+            DatabaseName = databaseName;
+        }
+
+
+        /*******************************************************************
+                                 CREATEDATABASE()
+         *******************************************************************/
         /// <summary>
         /// Creates a database with the provided string as Database name
         /// </summary>
@@ -28,22 +45,22 @@ namespace FamilyTree.Database
             {
                 return false;
             }
+
+
         }
 
 
-
-
-
-
-
-
-
+        /*******************************************************************
+                                 EXECUTESQL()
+         *******************************************************************/
         /// <summary>
         /// Executes SQL query and return number of rows affected as an INT.
         /// </summary>
-        /// <param name="sql">Takes an SQL query as a parameter</param>
+        /// <param name="sql">Takes an SQL query as a inparameter</param>
         /// <param name="parameters"></param>
-        /// <returns></returns>
+        /// <returns>Returns number of rows affected</returns>
+        /// 
+
         public int ExecuteSQL(string sql, params (string, string)[] parameters)
         {
             var connectionString = string.Format(ConnectionString, DatabaseName);
@@ -61,17 +78,15 @@ namespace FamilyTree.Database
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
+        /*******************************************************************
+                                 GETDATATABLE()
+         *******************************************************************/
+        /// <summary>
+        /// Gets information from the database and stores it in a datatable
+        /// </summary>
+        /// <param name="sql">The SQL string that will be queried to the database</param>
+        /// <param name="parameters"></param>
+        /// <returns>Returns a datatable with the query result</returns>
         public DataTable GetDataTable(string sql, params (string, string)[] parameters)
         {
             var dataTable = new DataTable();
@@ -95,47 +110,51 @@ namespace FamilyTree.Database
             return dataTable;
         }
 
-
-
-
-
-
+        /*******************************************************************
+                                 DOESDATABASEEXIST()
+         *******************************************************************/
         /// <summary>
-        /// Class that checks the existance of database and tables.
+        /// Class that checks the existance of database and tables.   
         /// </summary>
-
-
-
-        public bool DoesDataBaseExist()
+        /// <param name="crud">Takes an object of the crud class so the right database will be checked</param>
+        /// <returns>Returns true if it exists, false if it´s not existing.</returns>
+        public bool DoesDataBaseExist(Crud crud)
         {
-            var crud = new Crud();
 
-            var list = new List<string>();
             var sql = "SELECT name FROM sys.databases";
-
             var dt = crud.GetDataTable(sql);
+
+            //Kontrollerar om databasen finns
             foreach (DataRow row in dt.Rows)
             {
-                list.Add(row["name"].ToString());
-            }
-
-            if (list.Count > 0)
-            {
-                foreach (var item in list)
+                //om databasen finns
+                if (row["name"].ToString().Contains("FamilyTree"))
                 {
-                    if (item.Contains("FamilyTree"))
-                    {
-                        return true;
-                    }
-
+                    return true;
                 }
-                return false;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
+
+
+        /*******************************************************************
+                                 CREATETABLE()
+         *******************************************************************/
+        /// <summary>
+        /// Creates the nessecary table for the program to work
+        /// </summary>
+        /// <param name="table">Creates the table with this name</param>
+        /// <param name="fields">Defines what fields that should be included when created.</param>
+        public int CreateTable(string table, string fields)
+        {
+            var sql = $"CREATE TABLE {table} ({fields})";
+            return ExecuteSQL(sql);
+        }
+
+
+
+
 
     }
 }
