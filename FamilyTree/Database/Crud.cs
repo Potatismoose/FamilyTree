@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using FamilyTree.Person;
+using System;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace FamilyTree.Database
@@ -73,6 +75,14 @@ namespace FamilyTree.Database
                     {
                         cmd.Parameters.AddWithValue(parameter.Item1, parameter.Item2);
                     }
+
+                    foreach (SqlParameter parameter in cmd.Parameters)
+                    {
+                        if (parameter.Value.ToString() == "" || parameter.Value.ToString() == "0001-01-01 00:00:00")
+                        {
+                            parameter.Value = DBNull.Value;
+                        }
+                    }
                     return cmd.ExecuteNonQuery();
                 }
             }
@@ -96,15 +106,27 @@ namespace FamilyTree.Database
                 connection.Open();
                 using (var cmd = new SqlCommand(sql, connection))
                 {
+                    System.Diagnostics.Debug.WriteLine(sql);
                     foreach (var parameter in parameters)
                     {
+                        System.Diagnostics.Debug.WriteLine(parameter.Item1 + " : " + parameter.Item2);
                         cmd.Parameters.AddWithValue(parameter.Item1, parameter.Item2);
                     }
 
                     using (var adapter = new SqlDataAdapter(cmd))
                     {
                         adapter.Fill(dataTable);
+                        if (DatabaseName == "FamilyTree")
+                        {
+                            foreach (DataRow row in dataTable.Rows)
+                            {
+                                System.Diagnostics.Debug.WriteLine(row["firstName"].ToString());
+                            }
+
+                        }
                     }
+
+
                 }
             }
             return dataTable;
@@ -152,6 +174,142 @@ namespace FamilyTree.Database
             return ExecuteSQL(sql);
         }
 
+
+        /*******************************************************************
+                                 SEARCHPERSON() - PUBLIC
+         *******************************************************************/
+
+        public Relative SearchPerson(int id)
+        {
+            DataTable dt = new DataTable();
+            var sql = $"SELECT * FROM Persons WHERE id = @id";
+            dt = GetDataTable(sql, ("@id", id.ToString()));
+
+            if (dt.Rows.Count > 0)
+            {
+                return GetPerson(dt.Rows[0]);
+            }
+            else
+                return null;
+
+
+
+        }
+
+
+
+        /*******************************************************************
+                                 SEARCHPERSONLIKE() - PUBLIC
+         *******************************************************************/
+
+        //public Relative SearchPersonLike()
+        //{
+        //    DataTable dt = new DataTable();
+        //    var sql = $"SELECT * FROM Persons WHERE id = @id";
+        //    dt = GetDataTable(sql, ("@id", id.ToString()));
+
+
+        //    return GetPerson(dt.Rows[0]);
+
+
+        //}
+
+        /*******************************************************************
+                                 LISTPERSON() - PUBLIC
+
+
+        NOT IMPLEMENTED YET
+         *******************************************************************/
+        // TODO Implementera denna metod
+        public DataTable ListPerson()
+        {
+
+            return null;
+        }
+
+
+
+
+
+        /*******************************************************************
+                                 GETALLPERSONS() - PUBLIC
+         *******************************************************************/
+
+        /// <summary>
+        /// Method for searching database for 0 up to 2 keywords (firstname or lastname)
+        /// </summary>
+        /// <param name="searchString">Optional to include search parameter. If no parameter is included, the search will return everyone in database.</param>
+        /// <returns>Returns the datatable with 0 or more rows depending on searchresult</returns>
+        public DataTable GetAllPersons(string searchString = null)
+        {
+            string sql = "SELECT * FROM Persons ";
+            var fName = default(string);
+            var lName = default(string);
+            if (searchString != null)
+            {
+
+                var split = searchString.Split(' ');
+
+                if (split.Length > 1)
+                {
+                    fName = split[0];
+                    lName = split[1];
+                    sql += "WHERE firstName LIKE @fName OR lastName LIKE @lName ORDER BY firstName";
+                    return GetDataTable(sql, ("@fName", $"%{fName}%"), ("@lName", $"%{lName}%"));
+                }
+                else
+                {
+                    fName = split[0];
+                    sql += "WHERE firstName LIKE @fName ORDER BY firstName";
+                    return GetDataTable(sql, ("@fName", $"%{fName}%"));
+                }
+            }
+            sql += "ORDER BY firstName";
+            return GetDataTable(sql);
+
+        }
+
+
+
+        /*******************************************************************
+                                 GETPERSON() - PUBLIC
+         *******************************************************************/
+        /// <summary>
+        /// Creates one person from the Relative class. 
+        /// </summary>
+        /// <param name="row">Takes an DataRow as inparameter</param>
+        /// <returns>Returns a person object of the Relative class</returns>
+        public Relative GetPerson(DataRow row)
+        {
+            var person = new Relative()
+            {
+                Id = (int)row["id"],
+                FirstName = row["firstName"].ToString(),
+                LastName = row["lastName"].ToString(),
+                MotherId = (int)row["motherId"],
+                FatherId = (int)row["fatherId"]
+
+            };
+
+            if (!(row["birthDate"] is DBNull))
+            {
+                person.BirthDate = (DateTime)row["birthDate"];
+            }
+            if (!(row["birthPlace"] is DBNull))
+            {
+                person.BirthPlace = row["birthPlace"].ToString();
+            }
+            if (!(row["deathDate"] is DBNull))
+            {
+                person.DeathDate = (DateTime)row["deathDate"];
+            }
+            if (!(row["deathPlace"] is DBNull))
+            {
+                person.DeathPlace = row["deathPlace"].ToString();
+            }
+
+            return person;
+        }
 
 
 

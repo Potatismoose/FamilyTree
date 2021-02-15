@@ -58,6 +58,8 @@ namespace FamilyTree
                         "lastName NVARCHAR(50)," +
                         "birthDate DATE," +
                         "deathDate DATE," +
+                        "birthPlace NVARCHAR(25)," +
+                        "deathPlace NVARCHAR(25)," +
                         "motherId INT," +
                         "fatherId INT");
 
