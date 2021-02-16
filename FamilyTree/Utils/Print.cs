@@ -41,6 +41,12 @@ namespace FamilyTree.Utils
             }
 
         }
+        public static void DeleteRow(int left, int top)
+        {
+            Console.SetCursorPosition(left, top);
+            Console.WriteLine(new string(' ', 40));
+            Console.SetCursorPosition(left, top);
+        }
 
         public static void Red(string text)
         {

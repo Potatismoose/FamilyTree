@@ -1,5 +1,6 @@
 ﻿using FamilyTree.Person;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -182,8 +183,8 @@ namespace FamilyTree.Database
         public Relative SearchPerson(int id)
         {
             DataTable dt = new DataTable();
-            var sql = $"SELECT * FROM Persons WHERE id = @id";
-            dt = GetDataTable(sql, ("@id", id.ToString()));
+            var sql = $"SELECT * FROM Persons WHERE id = @personId";
+            dt = GetDataTable(sql, ("@personId", id.ToString()));
 
             if (dt.Rows.Count > 0)
             {
@@ -191,59 +192,21 @@ namespace FamilyTree.Database
             }
             else
                 return null;
-
-
-
         }
-
-
-
-        /*******************************************************************
-                                 SEARCHPERSONLIKE() - PUBLIC
-         *******************************************************************/
-
-        //public Relative SearchPersonLike()
-        //{
-        //    DataTable dt = new DataTable();
-        //    var sql = $"SELECT * FROM Persons WHERE id = @id";
-        //    dt = GetDataTable(sql, ("@id", id.ToString()));
-
-
-        //    return GetPerson(dt.Rows[0]);
-
-
-        //}
-
-        /*******************************************************************
-                                 LISTPERSON() - PUBLIC
-
-
-        NOT IMPLEMENTED YET
-         *******************************************************************/
-        // TODO Implementera denna metod
-        public DataTable ListPerson()
-        {
-
-            return null;
-        }
-
-
-
-
 
         /*******************************************************************
                                  GETALLPERSONS() - PUBLIC
          *******************************************************************/
 
         /// <summary>
-        /// Method for searching database for 0 up to 2 keywords (firstname or lastname)
+        /// Method for searching database for 0 up to 2 keywords (firstname or lastname).
         /// </summary>
         /// <param name="searchString">Optional to include search parameter. If no parameter is included, the search will return everyone in database.</param>
-        /// <returns>Returns the datatable with 0 or more rows depending on searchresult</returns>
+        /// <returns>Returns the datatable with 0 or more rows depending on searchresult.</returns>
         public DataTable GetAllPersons(string searchString = null)
         {
             string sql = "SELECT * FROM Persons ";
-            var fName = default(string);
+            var nameOrCity = default(string);
             var lName = default(string);
             if (searchString != null)
             {
@@ -252,16 +215,16 @@ namespace FamilyTree.Database
 
                 if (split.Length > 1)
                 {
-                    fName = split[0];
+                    nameOrCity = split[0];
                     lName = split[1];
                     sql += "WHERE firstName LIKE @fName OR lastName LIKE @lName ORDER BY firstName";
-                    return GetDataTable(sql, ("@fName", $"%{fName}%"), ("@lName", $"%{lName}%"));
+                    return GetDataTable(sql, ("@fName", $"%{nameOrCity}%"), ("@lName", $"%{lName}%"));
                 }
                 else
                 {
-                    fName = split[0];
-                    sql += "WHERE firstName LIKE @fName ORDER BY firstName";
-                    return GetDataTable(sql, ("@fName", $"%{fName}%"));
+                    nameOrCity = split[0];
+                    sql += "WHERE firstName LIKE @fName OR lastName LIKE @lName OR birthPlace LIKE @bPlace ORDER BY firstName";
+                    return GetDataTable(sql, ("@fName", $"%{nameOrCity}%"), ("@lName", $"%{nameOrCity}%"), ("bPlace", $"%{nameOrCity}%"));
                 }
             }
             sql += "ORDER BY firstName";
@@ -277,8 +240,8 @@ namespace FamilyTree.Database
         /// <summary>
         /// Creates one person from the Relative class. 
         /// </summary>
-        /// <param name="row">Takes an DataRow as inparameter</param>
-        /// <returns>Returns a person object of the Relative class</returns>
+        /// <param name="row">Takes an DataRow as inparameter.</param>
+        /// <returns>Returns a person object of the Relative class.</returns>
         public Relative GetPerson(DataRow row)
         {
             var person = new Relative()
@@ -312,6 +275,91 @@ namespace FamilyTree.Database
         }
 
 
+        /// <summary>
+        /// Method for getting the parents of a person and return them in a list.
+        /// </summary>
+        /// <param name="searchForTheseParents">List of perent ID:s.</param>
+        /// <returns>returns a list of parents.</returns>
+        public List<Relative> GetParents(List<int> searchForTheseParents)
+        {
+            for (int i = 0; i < searchForTheseParents.Count; i++)
+            {
+                if (searchForTheseParents[i] == 0)
+                {
+                    searchForTheseParents.RemoveAt(i);
+                }
+            }
+            List<Relative> listOfMatchingParents = new List<Relative>();
+            var sql = "SELECT * from Persons WHERE id = @id ";
+            if (searchForTheseParents.Count > 1)
+            {
+                sql += "OR id = @id2";
+                var dt = GetDataTable(sql, ("@id", $"{searchForTheseParents[0]}"), ("@id2", $"{searchForTheseParents[1]}"));
+                foreach (DataRow row in dt.Rows)
+                {
+                    var person = GetPerson(row);
+                    listOfMatchingParents.Add(person);
+                }
+            }
+            else
+            {
+                var dt = GetDataTable(sql, ("@id", $"{searchForTheseParents[0]}"));
+                var person = GetPerson(dt.Rows[0]);
+                listOfMatchingParents.Add(person);
+            }
+            return listOfMatchingParents;
+        }
+
+        /// <summary>
+        /// Method for finding a persons siblings. Takes a List of parent ID:s as argument.
+        /// </summary>
+        /// <param name="searchForTheseParents">List of parent ID:S.</param>
+        /// <param name="personId">The person ID of the person whom´s siblings you are trying to find.</param>
+        /// <returns>Returns a list of siblings.</returns>
+        public List<Relative> GetSiblings(List<int> searchForTheseParents, int personId)
+        {
+            List<Relative> listOfMatchingParents = new List<Relative>();
+            int counter = 0;
+            if (searchForTheseParents.Count >= 1)
+            {
+
+                if (searchForTheseParents.Count > 1)
+                {
+                    var sql = "SELECT * from Persons " +
+                        "WHERE id != @personId " +
+                        "AND motherId = @id " +
+                        "AND motherId != 0 " +
+                        "OR id != @personId " +
+                        "AND fatherId = @id2 " +
+                        "AND fatherId != 0";
+
+                    var dt = GetDataTable(sql, ("@id", $"{searchForTheseParents[0]}"), ("@personId", $"{personId}"), ("@id2", $"{searchForTheseParents[1]}"));
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        listOfMatchingParents.Add(GetPerson(row));
+                    }
+                }
+                else if (searchForTheseParents.Count == 1)
+                {
+                    var sql = "SELECT * from Persons " +
+                        "WHERE id != @personId " +
+                        "AND motherId = @id " +
+                        "AND motherId != 0 " +
+                        "OR id != @personId " +
+                        "AND fatherId = @id " +
+                        "AND fatherId != 0 ";
+
+                    var dt = GetDataTable(sql, ("@id", $"{searchForTheseParents[0]}"), ("@personId", $"{personId}"));
+                    listOfMatchingParents.Add(GetPerson(dt.Rows[0]));
+                }
+            }
+
+            else
+            {
+                return null;
+            }
+            return listOfMatchingParents;
+        }
 
 
     }

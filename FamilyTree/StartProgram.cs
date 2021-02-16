@@ -67,7 +67,7 @@ namespace FamilyTree
                     Thread.Sleep(2500);
                     MockData mock = new MockData();
                     mock.PrintText();
-                    Console.ReadKey();
+                    
                     return true;
 
                 }

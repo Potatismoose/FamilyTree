@@ -2,6 +2,17 @@
 
 namespace FamilyTree.Person
 {
+
+    class Test
+    {
+
+        public Test()
+        {
+            TestValue = 5;
+        }
+
+        public int TestValue { get; set; }
+    }
     class Relative
     {
         public int Id { get; set; }

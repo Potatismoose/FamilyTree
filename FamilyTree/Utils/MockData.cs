@@ -1,7 +1,6 @@
 ﻿using FamilyTree.Database;
 using FamilyTree.Person;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -12,9 +11,8 @@ namespace FamilyTree.Utils
 
         public void PrintText()
         {
-
             var contents = File.ReadAllLines(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\mockdata.txt");
-            
+
             foreach (var line in contents)
             {
 
@@ -24,11 +22,10 @@ namespace FamilyTree.Utils
                 }
                 else
                 {
-                    Console.WriteLine(line);
                     var split = line.Split(',');
                     var name = split[0];
                     var lastName = split[1];
-                    
+
                     DateTime birthDate = DateTime.ParseExact(split[2], "yyyy-MM-dd", null);
                     DateTime deathDate = DateTime.ParseExact(split[3], "yyyy-MM-dd", null);
                     int.TryParse(split[4], out var motherId);
@@ -42,7 +39,7 @@ namespace FamilyTree.Utils
         }
 
 
-        //Complete edition
+
         private void AddMockData(Relative person)
         {
 
@@ -60,10 +57,6 @@ namespace FamilyTree.Utils
                 ("@fatherId", $"{person.FatherId}"),
                 ("@birthPlace", $"{person.BirthPlace}"),
                 ("@deathPlace", $"{person.DeathPlace}"));
-
         }
-
-
-
     }
 }

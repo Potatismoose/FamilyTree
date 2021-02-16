@@ -109,7 +109,6 @@ namespace FamilyTree.Menus
                     Console.Write($"\n\t\t{searchMenuOptions[i]}");
                 }
 
-
                 string input = Console.ReadLine();
                 if (int.TryParse(input, out int userChoice))
                 {
@@ -117,37 +116,11 @@ namespace FamilyTree.Menus
                 }
                 else
                 {
-
                     List<Relative> listOfPersons = new List<Relative>();
                     Crud crud = new Crud("FamilyTree");
                     var dt = crud.GetAllPersons(input);
-                    foreach (DataRow row in dt.Rows)
-                    {
-                        System.Diagnostics.Debug.WriteLine(row["firstName"].ToString());
-                        listOfPersons.Add(crud.GetPerson(row));
-                    }
-                    foreach (var person in listOfPersons)
-                    {
-                        if (person != null)
-                        {
-                            ListPerson(dt, crud);
-                        }
-                    }
-
-
-                    //var person = 
-                    //if (person != null)
-                    //{
-                    //    crud.ListPerson();
-                    //}
-                    //else
-                    //{
-                    //    Console.WriteLine("\t\tIngen person hittades");
-                    //    Thread.Sleep(1500);
-                    //}
+                    ListPerson(dt, crud);
                 }
-
-
             } while (!continueCode);
 
         }
@@ -191,7 +164,7 @@ namespace FamilyTree.Menus
         /// </summary>
         /// <param name="dt">Takes an DataTable as inparameter</param>
         /// <param name="crud">Takes an instance of Crud class as inparameter</param>
-        private void ListPerson(DataTable dt, Crud crud)
+        private List<Relative> ListPerson(DataTable dt, Crud crud)
         {
             List<int> fullIdList = new List<int>();
             List<Relative> persons = new List<Relative>();
@@ -201,6 +174,7 @@ namespace FamilyTree.Menus
                 fullIdList.Add(Convert.ToInt32(row["id"]));
             }
             PrintListOfPersons(persons, fullIdList);
+            return persons;
         }
 
 
@@ -252,31 +226,23 @@ namespace FamilyTree.Menus
                 {
                     top = Console.CursorTop - 1;
                     left = Console.CursorLeft;
-                    Console.SetCursorPosition(left, top);
-                    Console.WriteLine(new string(' ', 40));
-                    Console.SetCursorPosition(left, top);
+                    Print.DeleteRow(left, top);
                     Console.Write("Ange id på person >");
                     top = Console.CursorTop;
                     leftTemp = Console.CursorLeft;
-                    Console.SetCursorPosition(left, top + 1);
-                    error = false;
-                    Console.WriteLine(new string(' ', 40));
-                    Console.SetCursorPosition(left, top + 1);
+                    Print.DeleteRow(left, top + 1);
                     Print.Red(errorMsg);
                     Console.SetCursorPosition(leftTemp, top);
-
+                    error = false;
                 }
                 else
                 {
                     Console.WriteLine();
                     Console.Write("\t\tAnge id på person >");
                 }
-
-
                 string input = Console.ReadLine();
                 if (int.TryParse(input, out int userChoice))
                 {
-
                     if (userChoice == 0)
                     {
                         continueCode = true;
@@ -295,10 +261,7 @@ namespace FamilyTree.Menus
                 {
                     error = true;
                     errorMsg = "Felaktig inmatning";
-
-
                 }
-
             } while (!continueCode);
         }
 
@@ -308,7 +271,7 @@ namespace FamilyTree.Menus
 
         private void ListPersonDetails(int userChoice, List<Relative> persons)
         {
-
+            Crud crud = new Crud("FamilyTree");
             foreach (var person in persons.Where(x => x.Id == userChoice))
             {
                 Console.WriteLine();
@@ -354,13 +317,40 @@ namespace FamilyTree.Menus
                     }
                 }
 
-                if (person.MotherId != 0 || person.FatherId != 0)
+                if (person.MotherId != 0 && person.FatherId != 0)
                 {
-                    Console.WriteLine("\t\t" + new string('═', 10));
+                    Console.WriteLine();
                     Print.DarkGrey("\t\tFöräldrar");
                     Console.WriteLine("\t\t" + new string('═', 10));
-                    Console.WriteLine("\t\tMamma: ");
-                    Console.Write("\t\tPappa: ");
+
+                    var parentList = crud.GetParents(new List<int> { person.MotherId, person.FatherId });
+                    foreach (var parent in parentList)
+                    {
+                        Console.WriteLine($"\t\t{parent.FirstName} {parent.LastName}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine();
+                    Print.DarkGrey("\t\tFöräldrar");
+                    Console.WriteLine("\t\t" + new string('═', 10));
+                    Console.WriteLine("\t\tInga föräldrar hittades.");
+                }
+
+                Console.WriteLine();
+                Print.DarkGrey("\t\tSyskon");
+                Console.WriteLine("\t\t" + new string('═', 10));
+                var siblingList = crud.GetSiblings(new List<int> { person.MotherId, person.FatherId }, person.Id);
+                if (siblingList != null)
+                {
+                    foreach (var parent in siblingList.Where(x => x != null))
+                    {
+                        Console.WriteLine($"\t\t{parent.FirstName} {parent.LastName}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("\t\tInga syskon hittades.");
                 }
             }
         }
