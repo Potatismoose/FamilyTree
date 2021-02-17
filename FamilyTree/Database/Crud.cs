@@ -206,7 +206,7 @@ namespace FamilyTree.Database
         public DataTable GetAllPersons(string searchString = null)
         {
             string sql = "SELECT * FROM Persons ";
-            var nameOrCity = default(string);
+            var nameOrCityOrDate = default(string);
             var lName = default(string);
             if (searchString != null)
             {
@@ -215,16 +215,16 @@ namespace FamilyTree.Database
 
                 if (split.Length > 1)
                 {
-                    nameOrCity = split[0];
+                    nameOrCityOrDate = split[0];
                     lName = split[1];
                     sql += "WHERE firstName LIKE @fName OR lastName LIKE @lName ORDER BY firstName";
-                    return GetDataTable(sql, ("@fName", $"%{nameOrCity}%"), ("@lName", $"%{lName}%"));
+                    return GetDataTable(sql, ("@fName", $"%{nameOrCityOrDate}%"), ("@lName", $"%{lName}%"));
                 }
                 else
                 {
-                    nameOrCity = split[0];
-                    sql += "WHERE firstName LIKE @fName OR lastName LIKE @lName OR birthPlace LIKE @bPlace ORDER BY firstName";
-                    return GetDataTable(sql, ("@fName", $"%{nameOrCity}%"), ("@lName", $"%{nameOrCity}%"), ("bPlace", $"%{nameOrCity}%"));
+                    nameOrCityOrDate = split[0];
+                    sql += "WHERE firstName LIKE @fName OR lastName LIKE @lName OR birthPlace LIKE @bPlace OR birthDate LIKE @bDate ORDER BY firstName";
+                    return GetDataTable(sql, ("@fName", $"%{nameOrCityOrDate}%"), ("@lName", $"%{nameOrCityOrDate}%"), ("bPlace", $"%{nameOrCityOrDate}%"), ("bDate", $"%{nameOrCityOrDate}%"));
                 }
             }
             sql += "ORDER BY firstName";
@@ -319,7 +319,7 @@ namespace FamilyTree.Database
         public List<Relative> GetSiblings(List<int> searchForTheseParents, int personId)
         {
             List<Relative> listOfMatchingParents = new List<Relative>();
-            int counter = 0;
+            
             if (searchForTheseParents.Count >= 1)
             {
 
@@ -355,6 +355,11 @@ namespace FamilyTree.Database
             }
 
             else
+            {
+                return null;
+            }
+
+            if (listOfMatchingParents.Count == 0)
             {
                 return null;
             }

@@ -3,6 +3,7 @@ using FamilyTree.Person;
 using FamilyTree.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
 
@@ -112,7 +113,19 @@ namespace FamilyTree.Menus
                 string input = Console.ReadLine();
                 if (int.TryParse(input, out int userChoice))
                 {
-                    continueCode = true;
+                    switch (userChoice)
+                    {
+                        case 0:
+                            continueCode = true;
+                            break;
+                        default:
+                            List<Relative> listOfPersons = new List<Relative>();
+                            Crud crud = new Crud("FamilyTree");
+                            var dt = crud.GetAllPersons(input);
+                            ListPerson(dt, crud);
+                            break;
+                    }
+                    
                 }
                 else
                 {
@@ -164,7 +177,7 @@ namespace FamilyTree.Menus
         /// </summary>
         /// <param name="dt">Takes an DataTable as inparameter</param>
         /// <param name="crud">Takes an instance of Crud class as inparameter</param>
-        private List<Relative> ListPerson(DataTable dt, Crud crud)
+        private void ListPerson(DataTable dt, Crud crud)
         {
             List<int> fullIdList = new List<int>();
             List<Relative> persons = new List<Relative>();
@@ -174,7 +187,7 @@ namespace FamilyTree.Menus
                 fullIdList.Add(Convert.ToInt32(row["id"]));
             }
             PrintListOfPersons(persons, fullIdList);
-            return persons;
+            
         }
 
 
@@ -188,12 +201,32 @@ namespace FamilyTree.Menus
         /// <param name="fullIdList">Takes a list with integer ID:s</param>
         private void PrintListOfPersons(List<Relative> persons, List<int> fullIdList)
         {
+            bool backgroundOnOff = true;
             foreach (var person in persons)
             {
-
-
-                string name = $"ID: {person.Id}. {person.FirstName} {person.LastName}";
-                Console.Write($"\t\t{name.PadRight(30, ' ')}  ");
+                const int maxLengthOfId = 2;
+                
+                string name = default;
+                if (person.Id.ToString().Length >= maxLengthOfId)
+                {
+                    name = $"ID: {person.Id}.  {person.FirstName} {person.LastName}";
+                }
+                else
+                {
+                    name = $"ID: {person.Id}.   {person.FirstName} {person.LastName}";
+                }
+                Console.Write("\t\t");
+                if (backgroundOnOff)
+                {
+                    Print.ChangeBackgroundDarkGrey();
+                    backgroundOnOff = false;
+                }
+                else
+                {
+                    Print.ChangeBackgroundBlack();
+                    backgroundOnOff = true;
+                }
+                Console.Write($"{name.PadRight(35, ' ')}  ");
                 if (person.BirthDate == null)
                 {
                     Console.Write("Födelsedag ej angiven,");
@@ -210,6 +243,7 @@ namespace FamilyTree.Menus
                 {
                     Print.Red($" Avliden {person.DeathDate.Value.ToString("d")}");
                 }
+                Print.ResetBackground();
             }
 
             bool continueCode = false;
@@ -316,6 +350,11 @@ namespace FamilyTree.Menus
                         Console.WriteLine(" Födelsedatum ej specificerat");
                     }
                 }
+
+                //foreach (var children in GetSiblings())
+                //{
+
+                //}
 
                 if (person.MotherId != 0 && person.FatherId != 0)
                 {

@@ -113,5 +113,19 @@ namespace FamilyTree.Utils
             Console.ResetColor();
 
         }
+        public static void ChangeBackgroundBlack()
+        {
+            Console.BackgroundColor = ConsoleColor.Black;
+        }
+
+        public static void ChangeBackgroundDarkGrey()
+        {
+            Console.BackgroundColor = ConsoleColor.DarkCyan;
+        }
+
+        public static void ResetBackground()
+        {
+            Console.BackgroundColor = ConsoleColor.Black;
+        }
     }
 }
