@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
+using System.Threading;
 
 namespace FamilyTree.Menus
 {
@@ -68,6 +69,7 @@ namespace FamilyTree.Menus
                     case 4:
                         break;
                     case 5:
+                        SearchMenu("Remove");
                         break;
                     case 6:
                         continueCode = true;
@@ -92,7 +94,7 @@ namespace FamilyTree.Menus
         /// <summary>
         /// Menu that print out the searchmenu and handle the input
         /// </summary>
-        private void SearchMenu()
+        private void SearchMenu(string showThisLogo = "Search")
         {
 
             List<string> searchMenuOptions = new List<string> { "Sök person:> " };
@@ -102,7 +104,7 @@ namespace FamilyTree.Menus
             do
             {
                 Console.Clear();
-                Print.PrintText("Search");
+                Print.PrintText(showThisLogo);
                 Console.WriteLine(Environment.NewLine);
                 Console.WriteLine("\t\tHär kan du söka efter en person, eller tryck 0+enter för att avbryta");
                 for (int i = 0; i < searchMenuOptions.Count; i++)
@@ -111,31 +113,54 @@ namespace FamilyTree.Menus
                 }
 
                 string input = Console.ReadLine();
-                if (int.TryParse(input, out int userChoice))
+                if (showThisLogo == "Search")
                 {
-                    switch (userChoice)
-                    {
-                        case 0:
-                            continueCode = true;
-                            break;
-                        default:
-                            List<Relative> listOfPersons = new List<Relative>();
-                            Crud crud = new Crud("FamilyTree");
-                            var dt = crud.GetAllPersons(input);
-                            ListPerson(dt, crud);
-                            break;
-                    }
-                    
+                    //If you are searching for a person
+                    continueCode = searchInput(continueCode, input);
                 }
                 else
                 {
-                    List<Relative> listOfPersons = new List<Relative>();
-                    Crud crud = new Crud("FamilyTree");
-                    var dt = crud.GetAllPersons(input);
-                    ListPerson(dt, crud);
+                    //If you want to delete a person
+                    continueCode = searchInput(continueCode, input, true);
                 }
             } while (!continueCode);
 
+        }
+
+
+        /// <summary>
+        /// Takes the input from the user search
+        /// </summary>
+        /// <param name="continueCode">boolean that tells the program to carry on or not</param>
+        /// <param name="input">The users input</param>
+        /// <returns></returns>
+        private bool searchInput(bool continueCode, string input, bool removePerson = false)
+        {
+            if (int.TryParse(input, out int userChoice))
+            {
+                switch (userChoice)
+                {
+                    case 0:
+                        continueCode = true;
+                        break;
+                    default:
+
+                        Crud crud = new Crud("FamilyTree");
+                        var dt = crud.GetAllPersons(input);
+                        ListPerson(dt, crud, removePerson);
+                        break;
+                }
+
+            }
+            else
+            {
+
+                Crud crud = new Crud("FamilyTree");
+                var dt = crud.GetAllPersons(input);
+                ListPerson(dt, crud, removePerson);
+            }
+
+            return continueCode;
         }
 
 
@@ -177,7 +202,7 @@ namespace FamilyTree.Menus
         /// </summary>
         /// <param name="dt">Takes an DataTable as inparameter</param>
         /// <param name="crud">Takes an instance of Crud class as inparameter</param>
-        private void ListPerson(DataTable dt, Crud crud)
+        private void ListPerson(DataTable dt, Crud crud, bool removePerson = false)
         {
             List<int> fullIdList = new List<int>();
             List<Relative> persons = new List<Relative>();
@@ -186,8 +211,8 @@ namespace FamilyTree.Menus
                 persons.Add(crud.GetPerson(row));
                 fullIdList.Add(Convert.ToInt32(row["id"]));
             }
-            PrintListOfPersons(persons, fullIdList);
-            
+            PrintListOfPersons(persons, fullIdList, removePerson);
+
         }
 
 
@@ -199,13 +224,13 @@ namespace FamilyTree.Menus
         /// </summary>
         /// <param name="persons">Takes an list with Relatives</param>
         /// <param name="fullIdList">Takes a list with integer ID:s</param>
-        private void PrintListOfPersons(List<Relative> persons, List<int> fullIdList)
+        private void PrintListOfPersons(List<Relative> persons, List<int> fullIdList, bool removePerson = false)
         {
-            bool backgroundOnOff = true;
+
             foreach (var person in persons)
             {
                 const int maxLengthOfId = 2;
-                
+
                 string name = default;
                 if (person.Id.ToString().Length >= maxLengthOfId)
                 {
@@ -216,16 +241,7 @@ namespace FamilyTree.Menus
                     name = $"ID: {person.Id}.   {person.FirstName} {person.LastName}";
                 }
                 Console.Write("\t\t");
-                if (backgroundOnOff)
-                {
-                    Print.ChangeBackgroundDarkGrey();
-                    backgroundOnOff = false;
-                }
-                else
-                {
-                    Print.ChangeBackgroundBlack();
-                    backgroundOnOff = true;
-                }
+
                 Console.Write($"{name.PadRight(35, ' ')}  ");
                 if (person.BirthDate == null)
                 {
@@ -243,9 +259,21 @@ namespace FamilyTree.Menus
                 {
                     Print.Red($" Avliden {person.DeathDate.Value.ToString("d")}");
                 }
-                Print.ResetBackground();
-            }
 
+            }
+            if (removePerson == true)
+            {
+                RemovePersonInputField(persons, fullIdList);
+            }
+            else
+            {
+                ShowPersonInputField(persons, fullIdList);
+
+            }
+        }
+
+        private void ShowPersonInputField(List<Relative> persons, List<int> fullIdList)
+        {
             bool continueCode = false;
             bool error = false;
             string errorMsg = default;
@@ -284,17 +312,118 @@ namespace FamilyTree.Menus
                     else if (fullIdList.Contains(userChoice))
                     {
                         ListPersonDetails(userChoice, persons);
+
                     }
                     else
                     {
                         error = true;
-                        errorMsg = "Felaktigt Id, försök igen.";
+                        errorMsg = "\t\tFelaktigt Id, försök igen.";
                     }
                 }
                 else
                 {
                     error = true;
-                    errorMsg = "Felaktig inmatning";
+                    errorMsg = "\t\tFelaktig inmatning";
+                }
+            } while (!continueCode);
+        }
+
+
+
+
+        private void RemovePersonInputField(List<Relative> persons, List<int> fullIdList)
+        {
+            bool continueCode = false;
+            bool error = false;
+            string errorMsg = default;
+            do
+            {
+                Console.Write("\t\t");
+                int top = 0;
+                int left = 0;
+                int leftTemp = 0;
+
+                if (error)
+                {
+                    top = Console.CursorTop - 1;
+                    left = Console.CursorLeft;
+                    Print.DeleteRow(left, top);
+                    Console.Write("Ange id på person du vill ta bort >");
+                    top = Console.CursorTop;
+                    leftTemp = Console.CursorLeft;
+                    Print.DeleteRow(left, top + 1);
+                    Print.Red(errorMsg);
+                    Console.SetCursorPosition(leftTemp, top);
+                    error = false;
+                }
+                else if (fullIdList.Count > 0)
+                {
+                    Console.WriteLine();
+                    Console.Write("\t\tAnge id på person du vill ta bort >");
+
+                }
+                else
+                {
+
+                    Print.Red("Ingen träff i databasen. Tryck enter för göra en ny sökning.");
+                    Console.ReadKey();
+                    break;
+                }
+                string input = Console.ReadLine();
+                Console.WriteLine();
+                if (int.TryParse(input, out int userChoice))
+                {
+                    if (userChoice == 0)
+                    {
+                        continueCode = true;
+
+                    }
+                    else if (fullIdList.Contains(userChoice))
+                    {
+                        var indexNr = fullIdList.IndexOf(userChoice);
+
+
+                        Console.Write($"\t\tÄr du säker på att du vill ta bort {persons[indexNr].FirstName} {persons[indexNr].LastName} och alla kopplingar till denne? y/n >");
+                        input = Console.ReadLine();
+                        switch (input.ToLower())
+                        {
+                            case "y":
+                                Console.Write("\t\tVänta, Tar bort personen");
+                                string dots = "....";
+                                foreach (var dot in dots)
+                                {
+                                    Console.Write(dot);
+                                    Thread.Sleep(500);
+                                }
+                                Crud crud = new Crud("FamilyTree");
+                                crud.RemovePerson(persons[indexNr].Id);
+                                Console.WriteLine($"\n\t\t{persons[indexNr].FirstName} {persons[indexNr].LastName} är nu borttagen, tryck enter för att fortsätta");
+                                Console.ReadKey();
+                                continueCode = true;
+                                break;
+                            case "n":
+                                Console.WriteLine($"\t\tPersonen togs EJ bort, tryck enter för att fortsätta");
+                                continueCode = true;
+                                Console.ReadKey();
+                                break;
+                            default:
+                                Console.WriteLine($"\t\tFelaktigt val, tryck enter för att fortsätta");
+                                Console.ReadKey();
+                                break;
+                        }
+
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Felaktigt Id, tryck enter för att fortsätta");
+                        Console.ReadKey();
+                    }
+                }
+                else
+                {
+                    error = true;
+                    Console.WriteLine($"Felaktig inmatning, tryck enter för att fortsätta");
+                    Console.ReadKey();
                 }
             } while (!continueCode);
         }
@@ -351,12 +480,26 @@ namespace FamilyTree.Menus
                     }
                 }
 
-                //foreach (var children in GetSiblings())
-                //{
 
-                //}
+                Console.WriteLine();
+                Print.DarkGrey("\t\tBarn");
+                Console.WriteLine("\t\t" + new string('═', 10));
 
-                if (person.MotherId != 0 && person.FatherId != 0)
+                var childrenList = crud.GetSiblings(new List<int> { person.Id });
+                if (childrenList == null)
+                {
+                    Console.WriteLine($"\t\tPersonen har inga barn.");
+                }
+                else
+                {
+                    foreach (var child in childrenList)
+                    {
+                        Console.WriteLine($"\t\t{child.FirstName} {child.LastName}");
+                    }
+                }
+
+
+                if (person.MotherId != 0 || person.FatherId != 0)
                 {
                     Console.WriteLine();
                     Print.DarkGrey("\t\tFöräldrar");

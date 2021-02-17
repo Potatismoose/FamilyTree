@@ -50,7 +50,7 @@ namespace FamilyTree.Utils
 
         public static void Red(string text)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine(text);
             Console.ResetColor();
         }
@@ -79,6 +79,19 @@ namespace FamilyTree.Utils
             Console.WriteLine(text);
             Console.ResetColor();
         }
+        public static void DarkCyan(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.WriteLine(text);
+            Console.ResetColor();
+        }
+        public static void Black(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine(text);
+            Console.ResetColor();
+        }
+
         public static void GreenW(string text)
         {
             Console.ForegroundColor = ConsoleColor.Green;
@@ -113,19 +126,29 @@ namespace FamilyTree.Utils
             Console.ResetColor();
 
         }
+        public static void DarkBlue(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine(text);
+            Console.ResetColor();
+
+        }
         public static void ChangeBackgroundBlack()
         {
-            Console.BackgroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.Black;
         }
 
         public static void ChangeBackgroundDarkGrey()
         {
-            Console.BackgroundColor = ConsoleColor.DarkCyan;
+            Console.BackgroundColor = ConsoleColor.DarkGray;
+            Console.ForegroundColor = ConsoleColor.Black;
         }
 
         public static void ResetBackground()
         {
             Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
 }

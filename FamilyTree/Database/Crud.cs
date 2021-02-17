@@ -191,7 +191,9 @@ namespace FamilyTree.Database
                 return GetPerson(dt.Rows[0]);
             }
             else
+            {
                 return null;
+            }
         }
 
         /*******************************************************************
@@ -316,10 +318,10 @@ namespace FamilyTree.Database
         /// <param name="searchForTheseParents">List of parent ID:S.</param>
         /// <param name="personId">The person ID of the person whom´s siblings you are trying to find.</param>
         /// <returns>Returns a list of siblings.</returns>
-        public List<Relative> GetSiblings(List<int> searchForTheseParents, int personId)
+        public List<Relative> GetSiblings(List<int> searchForTheseParents, int personId = 0)
         {
             List<Relative> listOfMatchingParents = new List<Relative>();
-            
+
             if (searchForTheseParents.Count >= 1)
             {
 
@@ -350,7 +352,18 @@ namespace FamilyTree.Database
                         "AND fatherId != 0 ";
 
                     var dt = GetDataTable(sql, ("@id", $"{searchForTheseParents[0]}"), ("@personId", $"{personId}"));
-                    listOfMatchingParents.Add(GetPerson(dt.Rows[0]));
+                    if (personId == 0)
+                    {
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            listOfMatchingParents.Add(GetPerson(row));
+                        }
+                    }
+
+                    else
+                    {
+                        listOfMatchingParents.Add(GetPerson(dt.Rows[0]));
+                    }
                 }
             }
 
@@ -364,6 +377,19 @@ namespace FamilyTree.Database
                 return null;
             }
             return listOfMatchingParents;
+        }
+
+        public void RemovePerson(int id)
+        {
+            var sql = "UPDATE Persons SET fatherId = 0 WHERE fatherId = @id";
+            ExecuteSQL(sql, ("@id", id.ToString()));
+            sql = "UPDATE Persons SET motherId = 0 WHERE motherId = @id";
+            ExecuteSQL(sql, ("@id", id.ToString()));
+            sql = "DELETE FROM Persons WHERE Id = @id";
+            ExecuteSQL(sql, ("@id", id.ToString()));
+
+
+
         }
 
 
