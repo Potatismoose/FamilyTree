@@ -403,6 +403,33 @@ namespace FamilyTree.Database
                 ("@deathPlace", $"{person.DeathPlace}"));
         }
 
+        public int EditPerson(Relative person)
+        {
+
+            var sql = $"UPDATE Persons " +
+                      $"SET firstName = @fname," +
+                      $"lastName = @lName," +
+                      $"birthDate = @birthDate," +
+                      $"deathDate = @deathDate," +
+                      $"motherId = @motherId," +
+                      $"fatherId = @fatherId," +
+                      $"birthPlace = @birthPlace, " +
+                      $"deathPlace = @deathPlace " +
+                      $"WHERE id = @id";
+
+
+            return ExecuteSQL(sql,
+                ("@fName", $"{person.FirstName}"),
+                ("@lName", $"{person.LastName}"),
+                ("@birthDate", $"{person.BirthDate}"),
+                ("@deathDate", $"{person.DeathDate}"),
+                ("@motherId", $"{person.MotherId}"),
+                ("@fatherId", $"{person.FatherId}"),
+                ("@birthPlace", $"{person.BirthPlace}"),
+                ("@deathPlace", $"{person.DeathPlace}"),
+                ("@id", $"{person.Id}"));
+        }
+
         public string GetLastAddedDatabasePost()
         {
             var sql = "SELECT id FROM Persons " +

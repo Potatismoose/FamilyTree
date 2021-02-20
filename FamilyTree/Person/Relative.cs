@@ -18,8 +18,8 @@ namespace FamilyTree.Person
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public DateTime? BirthDate { get; set; }
-        public DateTime? DeathDate { get; set; }
+        public DateTime? BirthDate { get; set; } = null;
+        public DateTime? DeathDate { get; set; } = null;
         public string BirthPlace { get; set; }
         public string DeathPlace { get; set; }
         public int MotherId { get; set; }

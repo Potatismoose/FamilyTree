@@ -1,0 +1,20 @@
+Elton,Christensen,2016-08-31,0001-01-01,4,3,Östersund,
+Melwin,Christensen,2013-12-02,0001-01-01,4,3,Östersund,
+Benny,Christensen,1982-07-03,0001-01-01,5,6,Östersund,
+Elleonor,Borgryd,1987-01-23,0001-01-01,9,10,Kalmar,
+Bodil,Andersson,1954-11-24,0001-01-01,7,8,Östersund,
+Sören,Christensen,1952-12-12,1998-03-10,11,12,Östersund,Östersund
+Aina,Sjödin,1931-01-05,0001-01-01,,,,
+Nathan,Sjödin,1929-05-12,1994-02-24,,,,Östersund
+Helen,Karlsson,1964-02-21,0001-01-01,,,Kalmar,
+Percy,Borgryd,1958-08-02,0001-01-01,,,Kalmar,
+Märtha,Christensen,1934-01-03,2003-10-20,,,Östersund,Östersund
+John,Christensen,1929-08-18,2007-12-28,,,Danmark,Östersund
+Dennis,Andersson,1989-04-09,0001-01-01,5,14,Östersund,
+Hans,Andersson,1960-12-27,0001-01-01,15,16,Östersund,
+Ruth,Andersson,1934-01-04,0001-01-01,,,Östersund,Östersund
+Evert,Andersson,1931-01-28,0001-01-01,,,Östersund,Östersund
+Jimmie,Andersson,1990-10-29,0001-01-01,5,14,Östersund,
+Anna,Christensen,1976-02-10,0001-01-01,5,6,Östersund,
+Åsa,Christensen,1974-03-10,0001-01-01,5,6,Östersund,
+// Förnamn, Efternamn, Fördelsedatum i formatet ÅÅÅÅ-MM-DD, Dödsdatum i formatet ÅÅÅÅ-MM-DD, Mother ID, Father ID, Födelsestad, Dödsstad
