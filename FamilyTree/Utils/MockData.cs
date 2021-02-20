@@ -2,7 +2,6 @@
 using FamilyTree.Person;
 using System;
 using System.IO;
-using System.Reflection;
 
 namespace FamilyTree.Utils
 {
@@ -11,7 +10,7 @@ namespace FamilyTree.Utils
 
         public void PrintText()
         {
-            var contents = File.ReadAllLines(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\mockdata.txt");
+            var contents = File.ReadAllLines(Path.Combine(Environment.CurrentDirectory, @"../../../../mockdata.txt"));
 
             foreach (var line in contents)
             {
@@ -34,14 +33,14 @@ namespace FamilyTree.Utils
                     var deathPlace = split[7];
                     Crud write = new Crud("FamilyTree");
                     write.AddPerson(new Relative(name, lastName, birthDate, deathDate, motherId, fatherId, (birthPlace, deathPlace)));
-                    
-                    
+
+
                 }
             }
         }
 
 
 
-        
+
     }
 }

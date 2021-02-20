@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 
 namespace FamilyTree.Utils
 {
@@ -100,7 +99,7 @@ namespace FamilyTree.Utils
             til keyword 2 is found (not including keyword2)*/
             string keyWord1 = keyword;
             string keyWord2 = "#" + keyword;
-            var contents = File.ReadAllLines(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\text.txt");
+            var contents = File.ReadAllLines(Path.Combine(Environment.CurrentDirectory, @"../../../../text.txt"));
             bool printOut = false;
             foreach (var line in contents)
             {
