@@ -64,7 +64,7 @@ namespace FamilyTree.Database
         /// <returns>Returns number of rows affected</returns>
         /// 
 
-        public int ExecuteSQL(string sql, params (string, string)[] parameters)
+        private int ExecuteSQL(string sql, params (string, string)[] parameters)
         {
             var connectionString = string.Format(ConnectionString, DatabaseName);
             using (var connection = new SqlConnection(connectionString))
@@ -117,14 +117,7 @@ namespace FamilyTree.Database
                     using (var adapter = new SqlDataAdapter(cmd))
                     {
                         adapter.Fill(dataTable);
-                        if (DatabaseName == "FamilyTree")
-                        {
-                            foreach (DataRow row in dataTable.Rows)
-                            {
-                                System.Diagnostics.Debug.WriteLine(row["firstName"].ToString());
-                            }
-
-                        }
+                        
                     }
 
 
@@ -188,7 +181,7 @@ namespace FamilyTree.Database
 
             if (dt.Rows.Count > 0)
             {
-                return GetPerson(dt.Rows[0]);
+                return CreatePersonFromQuery(dt.Rows[0]);
             }
             else
             {
@@ -237,14 +230,14 @@ namespace FamilyTree.Database
 
 
         /*******************************************************************
-                                 GETPERSON() - PUBLIC
+                          CREATEPERSONFROMQUERY() - PUBLIC
          *******************************************************************/
         /// <summary>
         /// Creates one person from the Relative class. 
         /// </summary>
         /// <param name="row">Takes an DataRow as inparameter.</param>
         /// <returns>Returns a person object of the Relative class.</returns>
-        public Relative GetPerson(DataRow row)
+        public Relative CreatePersonFromQuery(DataRow row)
         {
             var person = new Relative()
             {
@@ -299,14 +292,14 @@ namespace FamilyTree.Database
                 var dt = GetDataTable(sql, ("@id", $"{searchForTheseParents[0]}"), ("@id2", $"{searchForTheseParents[1]}"));
                 foreach (DataRow row in dt.Rows)
                 {
-                    var person = GetPerson(row);
+                    var person = CreatePersonFromQuery(row);
                     listOfMatchingParents.Add(person);
                 }
             }
             else
             {
                 var dt = GetDataTable(sql, ("@id", $"{searchForTheseParents[0]}"));
-                var person = GetPerson(dt.Rows[0]);
+                var person = CreatePersonFromQuery(dt.Rows[0]);
                 listOfMatchingParents.Add(person);
             }
             return listOfMatchingParents;
@@ -338,7 +331,7 @@ namespace FamilyTree.Database
                     var dt = GetDataTable(sql, ("@id", $"{searchForTheseParents[0]}"), ("@personId", $"{personId}"), ("@id2", $"{searchForTheseParents[1]}"));
                     foreach (DataRow row in dt.Rows)
                     {
-                        listOfMatchingParents.Add(GetPerson(row));
+                        listOfMatchingParents.Add(CreatePersonFromQuery(row));
                     }
                 }
                 else if (searchForTheseParents.Count == 1)
@@ -356,13 +349,13 @@ namespace FamilyTree.Database
                     {
                         foreach (DataRow row in dt.Rows)
                         {
-                            listOfMatchingParents.Add(GetPerson(row));
+                            listOfMatchingParents.Add(CreatePersonFromQuery(row));
                         }
                     }
 
                     else
                     {
-                        listOfMatchingParents.Add(GetPerson(dt.Rows[0]));
+                        listOfMatchingParents.Add(CreatePersonFromQuery(dt.Rows[0]));
                     }
                 }
             }
@@ -387,11 +380,38 @@ namespace FamilyTree.Database
             ExecuteSQL(sql, ("@id", id.ToString()));
             sql = "DELETE FROM Persons WHERE Id = @id";
             ExecuteSQL(sql, ("@id", id.ToString()));
-
-
-
         }
 
+        
 
+        public int AddPerson(Relative person)
+        {
+
+            var sql = $"INSERT INTO Persons " +
+                      $"(firstName,lastName,birthDate,deathDate,motherId,fatherId, birthPlace, deathPlace) " +
+                      $"VALUES(@fName, @lName, @birthDate, @deathDate, @motherId, @fatherId, @birthPlace, @deathPlace)";
+
+
+            return ExecuteSQL(sql,
+                ("@fName", $"{person.FirstName}"),
+                ("@lName", $"{person.LastName}"),
+                ("@birthDate", $"{person.BirthDate}"),
+                ("@deathDate", $"{person.DeathDate}"),
+                ("@motherId", $"{person.MotherId}"),
+                ("@fatherId", $"{person.FatherId}"),
+                ("@birthPlace", $"{person.BirthPlace}"),
+                ("@deathPlace", $"{person.DeathPlace}"));
+        }
+
+        public string GetLastAddedDatabasePost()
+        {
+            var sql = "SELECT id FROM Persons " +
+                "WHERE ID = (SELECT IDENT_CURRENT('Persons'))";
+
+            var dt = GetDataTable(sql);
+
+            DataRow dr =  dt.Rows[0];
+            return dr["id"].ToString();
+        }
     }
 }

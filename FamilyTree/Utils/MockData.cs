@@ -32,31 +32,16 @@ namespace FamilyTree.Utils
                     int.TryParse(split[5], out var fatherId);
                     var birthPlace = split[6];
                     var deathPlace = split[7];
-
-                    AddMockData(new Relative(name, lastName, birthDate, deathDate, motherId, fatherId, (birthPlace, deathPlace)));
+                    Crud write = new Crud("FamilyTree");
+                    write.AddPerson(new Relative(name, lastName, birthDate, deathDate, motherId, fatherId, (birthPlace, deathPlace)));
+                    
+                    
                 }
             }
         }
 
 
 
-        private void AddMockData(Relative person)
-        {
-
-            var sql = $"INSERT INTO Persons " +
-                      $"(firstName,lastName,birthDate,deathDate,motherId,fatherId, birthPlace, deathPlace) " +
-                      $"VALUES(@fName, @lName, @birthDate, @deathDate, @motherId, @fatherId, @birthPlace, @deathPlace)";
-
-            Crud write = new Crud("FamilyTree");
-            write.ExecuteSQL(sql,
-                ("@fName", $"{person.FirstName}"),
-                ("@lName", $"{person.LastName}"),
-                ("@birthDate", $"{person.BirthDate}"),
-                ("@deathDate", $"{person.DeathDate}"),
-                ("@motherId", $"{person.MotherId}"),
-                ("@fatherId", $"{person.FatherId}"),
-                ("@birthPlace", $"{person.BirthPlace}"),
-                ("@deathPlace", $"{person.DeathPlace}"));
-        }
+        
     }
 }

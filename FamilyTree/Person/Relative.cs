@@ -43,7 +43,7 @@ namespace FamilyTree.Person
         {
             this.FirstName = fName;
             this.LastName = lName;
-            if (birthDate.ToString()=="0001-01-01")
+            if (birthDate.ToShortDateString()=="0001-01-01" || birthDate.ToShortDateString() == null)
             {
                 this.BirthDate = null;
             }
@@ -52,7 +52,7 @@ namespace FamilyTree.Person
                 this.BirthDate = birthDate;
             }
 
-            if (deathDate.ToShortDateString().ToString() == "0001-01-01" || deathDate.ToShortDateString().ToString() == null)
+            if (deathDate.ToShortDateString() == "0001-01-01" || deathDate.ToShortDateString() == null)
             {
                 this.DeathDate = null;
                 this.Alive = true;

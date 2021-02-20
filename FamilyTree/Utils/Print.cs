@@ -1,14 +1,98 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 
 namespace FamilyTree.Utils
 {
     static class Print
     {
 
+
+        public static void Black(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine(text);
+            Console.ResetColor();
+        }
+
+        public static void Blue(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            if (text.Contains("alternativ"))
+            {
+                Console.Write(text);
+            }
+            else
+            {
+                Console.WriteLine(text);
+            }
+            Console.ResetColor();
+
+        }
+
+        public static void ChangeBackgroundBlack()
+        {
+            Console.BackgroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.Black;
+        }
+
+        public static void ChangeBackgroundDarkGrey()
+        {
+            Console.BackgroundColor = ConsoleColor.DarkGray;
+            Console.ForegroundColor = ConsoleColor.Black;
+        }
+
+        public static void DarkBlue(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine(text);
+            Console.ResetColor();
+
+        }
+
+        public static void DarkCyan(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.WriteLine(text);
+            Console.ResetColor();
+        }
+
+        public static void DarkGrey(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(text);
+            Console.ResetColor();
+
+        }
+
+        public static void DeleteRow(int left, int top)
+        {
+            Console.SetCursorPosition(left, top);
+            Console.WriteLine(new string(' ', 100));
+            Console.SetCursorPosition(left, top);
+        }
+
+        public static void Green(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine(text);
+            Console.ResetColor();
+        }
+
+        public static void GreenW(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(text);
+            Console.ResetColor();
+        }
+
+        public static void Grey(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(text);
+            Console.ResetColor();
+
+        }
 
         public static void PrintText(string keyword)
         {
@@ -41,16 +125,9 @@ namespace FamilyTree.Utils
             }
 
         }
-        public static void DeleteRow(int left, int top)
-        {
-            Console.SetCursorPosition(left, top);
-            Console.WriteLine(new string(' ', 40));
-            Console.SetCursorPosition(left, top);
-        }
-
         public static void Red(string text)
         {
-            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(text);
             Console.ResetColor();
         }
@@ -59,6 +136,11 @@ namespace FamilyTree.Utils
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write(text);
             Console.ResetColor();
+        }
+        public static void ResetBackground()
+        {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
 
         public static void Yellow(string text)
@@ -72,83 +154,6 @@ namespace FamilyTree.Utils
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write(text);
             Console.ResetColor();
-        }
-        public static void Green(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine(text);
-            Console.ResetColor();
-        }
-        public static void DarkCyan(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine(text);
-            Console.ResetColor();
-        }
-        public static void Black(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.WriteLine(text);
-            Console.ResetColor();
-        }
-
-        public static void GreenW(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(text);
-            Console.ResetColor();
-        }
-        public static void Grey(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine(text);
-            Console.ResetColor();
-
-        }
-        public static void DarkGrey(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine(text);
-            Console.ResetColor();
-
-        }
-        public static void Blue(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            if (text.Contains("alternativ"))
-            {
-                Console.Write(text);
-            }
-            else
-            {
-                Console.WriteLine(text);
-            }
-            Console.ResetColor();
-
-        }
-        public static void DarkBlue(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine(text);
-            Console.ResetColor();
-
-        }
-        public static void ChangeBackgroundBlack()
-        {
-            Console.BackgroundColor = ConsoleColor.Gray;
-            Console.ForegroundColor = ConsoleColor.Black;
-        }
-
-        public static void ChangeBackgroundDarkGrey()
-        {
-            Console.BackgroundColor = ConsoleColor.DarkGray;
-            Console.ForegroundColor = ConsoleColor.Black;
-        }
-
-        public static void ResetBackground()
-        {
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
 }
