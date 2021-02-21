@@ -7,13 +7,8 @@ namespace FamilyTree.Utils
     {
 
 
-        public static void Black(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.WriteLine(text);
-            Console.ResetColor();
-        }
 
+        // 5 methods for printing out text in different colors. Takes a string as the text that should be printed.
         public static void Blue(string text)
         {
             Console.ForegroundColor = ConsoleColor.Blue;
@@ -28,34 +23,6 @@ namespace FamilyTree.Utils
             Console.ResetColor();
 
         }
-
-        public static void ChangeBackgroundBlack()
-        {
-            Console.BackgroundColor = ConsoleColor.Gray;
-            Console.ForegroundColor = ConsoleColor.Black;
-        }
-
-        public static void ChangeBackgroundDarkGrey()
-        {
-            Console.BackgroundColor = ConsoleColor.DarkGray;
-            Console.ForegroundColor = ConsoleColor.Black;
-        }
-
-        public static void DarkBlue(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine(text);
-            Console.ResetColor();
-
-        }
-
-        public static void DarkCyan(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine(text);
-            Console.ResetColor();
-        }
-
         public static void DarkGrey(string text)
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -63,36 +30,41 @@ namespace FamilyTree.Utils
             Console.ResetColor();
 
         }
-
-        public static void DeleteRow(int left, int top)
-        {
-            Console.SetCursorPosition(left, top);
-            Console.WriteLine(new string(' ', 100));
-            Console.SetCursorPosition(left, top);
-        }
-
         public static void Green(string text)
         {
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine(text);
             Console.ResetColor();
         }
-
-        public static void GreenW(string text)
+        public static void Red(string text)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(text);
+            Console.ResetColor();
+        }
+        public static void RedW(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.Write(text);
             Console.ResetColor();
         }
 
-        public static void Grey(string text)
+
+        /// <summary>
+        /// Used for printing out an empty line (deleting current text printed there).
+        /// </summary>
+        /// <param name="left">Where to start (left position).</param>
+        /// <param name="top">Where to start (top position).</param>
+        public static void DeleteRow(int left, int top)
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine(text);
-            Console.ResetColor();
-
+            Console.SetCursorPosition(left, top);
+            Console.WriteLine(new string(' ', 100));
+            Console.SetCursorPosition(left, top);
         }
-
+        /// <summary>
+        /// Method for printing out the pages "top text"
+        /// </summary>
+        /// <param name="keyword"></param>
         public static void PrintText(string keyword)
         {
             /*Check for keyword in file, read from next line and print out 
@@ -123,36 +95,6 @@ namespace FamilyTree.Utils
                 }
             }
 
-        }
-        public static void Red(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(text);
-            Console.ResetColor();
-        }
-        public static void RedW(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write(text);
-            Console.ResetColor();
-        }
-        public static void ResetBackground()
-        {
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.Gray;
-        }
-
-        public static void Yellow(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine(text);
-            Console.ResetColor();
-        }
-        public static void YellowW(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write(text);
-            Console.ResetColor();
         }
     }
 }

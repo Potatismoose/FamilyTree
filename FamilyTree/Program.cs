@@ -1,5 +1,4 @@
-﻿using FamilyTree.Database;
-using System;
+﻿using System;
 
 namespace FamilyTree
 {
@@ -7,6 +6,7 @@ namespace FamilyTree
     {
         static void Main(string[] args)
         {
+            Console.Title = "Family Tree";
             StartProgram start = new StartProgram();
             start.Run();
         }

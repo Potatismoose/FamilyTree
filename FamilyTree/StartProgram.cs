@@ -10,14 +10,14 @@ namespace FamilyTree
     class StartProgram
     {
 
-        /*****************************************************************************
-         *                                RUN()
-         *****************************************************************************/
         /// <summary>
         /// Method for starting up the program
         /// </summary>
         public void Run()
         {
+            /*****************************************************************************
+            *                                RUN()
+            *****************************************************************************/
             if (CheckDatabase())
             {
                 Menu menu = new Menu();
@@ -31,18 +31,15 @@ namespace FamilyTree
             }
         }
 
-
-        /*****************************************************************************
-         *                            CHECKDATABASE()
-         *****************************************************************************/
-
-
-
         /// <summary>
         /// This method checks if database exists, and if not creates database and tables.
         /// </summary>
+        /// <returns>Returns true if database was created or if database exists. Else false if not created</returns>
         private bool CheckDatabase()
         {
+            /*****************************************************************************
+            *                            CHECKDATABASE()
+            *****************************************************************************/
             Crud db = new Crud("FamilyTree");
             Crud dbMaster = new Crud("Master");
 
@@ -66,8 +63,8 @@ namespace FamilyTree
                     Console.WriteLine("\t\tDatabas skapades, Välkommen till första användningen av Family Tree");
                     Thread.Sleep(2500);
                     MockData mock = new MockData();
-                    mock.PrintText();
-                    
+                    mock.ReadMockdataAndAddToDatabase();
+
                     return true;
 
                 }

@@ -7,8 +7,10 @@ namespace FamilyTree.Utils
 {
     class MockData
     {
-
-        public void PrintText()
+        /// <summary>
+        /// Reads the mockdata text file and creates a person. Sends person to AddPerson for adding created person to database.
+        /// </summary>
+        public void ReadMockdataAndAddToDatabase()
         {
             var contents = File.ReadAllLines(Path.Combine(Environment.CurrentDirectory, @"../../../../mockdata.txt"));
 
@@ -33,8 +35,6 @@ namespace FamilyTree.Utils
                     var deathPlace = split[7];
                     Crud write = new Crud("FamilyTree");
                     write.AddPerson(new Relative(name, lastName, birthDate, deathDate, motherId, fatherId, (birthPlace, deathPlace)));
-
-
                 }
             }
         }
