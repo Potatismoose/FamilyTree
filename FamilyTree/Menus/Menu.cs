@@ -564,7 +564,7 @@ namespace FamilyTree.Menus
                                 {
                                     Console.WriteLine($"{string.Format("{0:yyyy/MM/dd}", persons[0].DeathDate)}");
                                 }
-                                var deathDate = AskUserForOptionalInput("nytt dödsdatum (ange inget för att ta bort)");
+                                var deathDate = AskUserForOptionalInput("nytt dödsdatum (lämna tomt för att ta bort)");
                                 persons[0].DeathDate = Convert.ToDateTime(deathDate);
                                 break;
 
